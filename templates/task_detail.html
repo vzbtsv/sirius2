@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.title }} - Тренажер по русскому{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="task-info">
+        <a href="{{ url_for('index') }}" class="back-link">← Назад к заданиям</a>
+        
+        <div class="task-header">
+            <h1>
+                {% if task.title %}
+                    {{ task.title }}
+                {% else %}
+                    Задание {{ task.id }}
+                {% endif %}
+            </h1>
+            <div class="task-meta">
+                <span class="difficulty-badge difficulty-{{ task.difficulty }}">
+                    {{ task.difficulty }}
+                </span>
+                <span class="type-badge">{{ task.type }}</span>
+                {% if completed %}
+                <span class="completed-status">✓ Выполнено</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if task.description %}
+        <p class="task-description">{{ task.description }}</p>
+        {% endif %}
+
+        <div class="task-content">
+            <h3>Задание:</h3>
+            <div class="question-box">
+                <p>{{ task.question }}</p>
+            </div>
+        </div>
+
+        {% if message %}
+        <div class="info-message">
+            {{ message }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Форма для выполнения задания -->
+    {% if show_question %}
+    <form id="task-form" class="task-form">
+        <div class="answer-section">
+            <div class="form-group">
+                <label for="user_answer">Ваш ответ:</label>
+                <input type="text"
+                       id="user_answer"
+                       name="user_answer"
+                       placeholder="Введите ваш ответ здесь..."
+                       class="answer-field"
+                       required>
+                <small>Ответ будет сравниваться в нижнем регистре (не важно, заглавные или строчные буквы)</small>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" onclick="checkAnswer()" class="btn primary-btn submit-btn">
+                Проверить ответ
+            </button>
+            <button type="reset" class="btn secondary-btn">Очистить</button>
+        </div>
+    </form>
+
+    <!-- Результаты -->
+    <div id="results" class="results-container" style="display: none;">
+        <h2>Результат проверки</h2>
+
+        <div id="result-message" class="result-message"></div>
+
+        <div class="answer-comparison">
+            <div class="answer-box">
+                <h4>Ваш ответ:</h4>
+                <p id="user-answer-display"></p>
+            </div>
+            <div class="answer-box correct">
+                <h4>Правильный ответ:</h4>
+                <p id="correct-answer-display"></p>
+            </div>
+        </div>
+
+        <div class="results-actions">
+            <button onclick="tryAgain()" class="btn primary-btn">Попробовать снова</button>
+            <a href="{{ url_for('index') }}" class="btn secondary-btn">К списку заданий</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if show_question %}
+<script>
+function checkAnswer() {
+    const userAnswer = document.getElementById('user_answer').value.trim();
+
+    if (!userAnswer) {
+        alert('Пожалуйста, введите ваш ответ');
+        return;
+    }
+
+    // Отправляем на проверку
+    fetch('/task/{{ task.id }}/check', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answer: userAnswer })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        // Показываем результаты
+        const resultMessage = document.getElementById('result-message');
+        const userAnswerDisplay = document.getElementById('user-answer-display');
+        const correctAnswerDisplay = document.getElementById('correct-answer-display');
+
+        userAnswerDisplay.textContent = data.user_answer || '(нет ответа)';
+        correctAnswerDisplay.textContent = data.correct_answer;
+
+        if (data.is_correct) {
+            resultMessage.innerHTML = '<div class="success-message">✅ Правильно! Отличная работа!</div>';
+            resultMessage.className = 'result-message success';
+        } else {
+            resultMessage.innerHTML = '<div class="error-message">❌ Не совсем верно. Попробуйте еще раз!</div>';
+            resultMessage.className = 'result-message error';
+        }
+
+        // Показываем блок с результатами
+        document.getElementById('task-form').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при проверке ответа');
+    });
+}
+
+function tryAgain() {
+    // Скрываем результаты, показываем форму
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('task-form').style.display = 'block';
+    document.getElementById('user_answer').value = '';
+    document.getElementById('user_answer').focus();
+}
+</script>
+{% endif %}
+{% endblock %}

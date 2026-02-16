@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <h1>Регистрация</h1>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username">Логин:</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Придумайте логин" required>
+                <small>Логин должен быть уникальным</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="text" id="password" name="password"
+                       placeholder="Придумайте пароль" required>
+                <small>Не сообщайте пароль никому</small>
+            </div>
+
+            <button type="submit" class="btn primary-btn">Зарегистрироваться</button>
+        </form>
+
+
+        <p>Уже есть аккаунт?
+        <div>
+            <a href="{{ url_for('login') }}">Войдите</a>
+            <a href="{{ url_for('index') }}">Вернуться на главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

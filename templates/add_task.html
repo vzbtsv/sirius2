@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить задание - Тренажер по русскому{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1>Добавить новое задание</h1>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" class="add-task-form">
+            <div class="form-section">
+                <h2>Создание задания</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="difficulty">Уровень сложности:*</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="легкий">Легкий</option>
+                            <option value="средний" selected>Средний</option>
+                            <option value="сложный">Сложный</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Тип задания:*</label>
+                        <select id="type" name="type" required>
+                            <option value="">Выберите раздел...</option>
+                            <option value="Лексические СВ">Лексические СВ</option>
+                            <option value="Синтаксические СВ">Синтаксические СВ</option>
+                            <option value="Фонетические СВ">Фонетические СВ</option>
+                            <option value="Смешанные задания">Смешанные задания</option>
+                            <option value="Задания формата ЕГЭ">Задания формата ЕГЭ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="question">Текст вопроса:*</label>
+                    <textarea id="question" name="question" rows="4" required
+                              placeholder="Введите текст вопроса или задание..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="answer">Правильный ответ:*</label>
+                    <input type="text" id="answer" name="answer" required
+                           placeholder="Введите правильный ответ...">
+                    <small>* Обязательные поля. Ответ будет сравниваться в нижнем регистре</small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary-btn">Создать задание</button>
+                <a href="{{ url_for('index') }}" class="btn secondary-btn">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

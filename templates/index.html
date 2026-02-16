@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Тренажер 22 задания ЕГЭ по русскому языку{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="welcome-section">
+        <h1>Тренажер 22 задания ЕГЭ по русскому языку</h1>
+        
+        {% if current_user %}
+        <div class="user-greeting">
+            <h2>Добро пожаловать, {{ current_user }}!</h2>
+            <p>Готовьтесь к экзамену и отслеживайте свой прогресс.</p>
+        </div>
+        {% else %}
+        <div class="auth-prompt">
+            <h2>Начните подготовку прямо сейчас!</h2>
+            <p>Зарегистрируйтесь, чтобы отслеживать прогресс и сохранять результаты.</p>
+            <div class="auth-buttons">
+                <a href="{{ url_for('register') }}" class="btn primary-btn">Зарегистрироваться</a>
+                <a href="{{ url_for('login') }}" class="nav-btn">Войти</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    {% if current_user and user_data %}
+    <div class="stats-section">
+        <h2>Ваша статистика</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ user_data.get('stats', {}).get('total_tasks', 0) }}</div>
+                <div class="stat-label">Выполнено заданий</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ user_data.get('stats', {}).get('correct_answers', 0) }}</div>
+                <div class="stat-label">Правильных ответов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ user_data.get('stats', {}).get('accuracy', 0) }}%</div>
+                <div class="stat-label">Точность</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <div class="tasks-section">
+        <div class="section-header">
+            <h2>Доступные задания</h2>
+            {% if current_user %}
+            <a href="{{ url_for('add_task') }}" class="btn primary-btn">Добавить задание</a>
+            {% endif %}
+        </div>
+        
+        {% if tasks %}
+        <div class="tasks-grid">
+            {% for task in tasks %}
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="task-difficulty difficulty-{{ task.difficulty }}">
+                        {{ task.difficulty }}
+                    </span>
+                    <span class="task-type">{{ task.type }}</span>
+                </div>
+                
+                <h3 class="task-title">
+                    {% if task.title %}
+                        {{ task.title }}
+                    {% else %}
+                        Задание {{ task.id }}
+                    {% endif %}
+                </h3>
+                
+                {% if task.description %}
+                <p class="task-description">{{ task.description }}</p>
+                {% endif %}
+                
+                <div class="task-preview">
+                    <p><strong>Задание:</strong> {{ task.question[:100] }}{% if task.question|length > 100 %}...{% endif %}</p>
+                </div>
+                
+                <div class="task-meta">
+                    <span class="meta-item">Создал: {{ task.created_by }}</span>
+                    <span class="meta-item">Дата: {{ task.created_at }}</span>
+                </div>
+                
+                <div class="task-actions">
+                    <a href="{{ url_for('task_detail', task_id=task.id) }}" class="btn start-btn">
+                        {% if current_user %}Начать{% else %}Посмотреть{% endif %}
+                    </a>
+                    {% if current_user and user_data and task.id in user_data.get('completed_tasks', []) %}
+                    <span class="completed-badge">✓ Выполнено</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-tasks">
+            <p>Пока нет доступных заданий.</p>
+            {% if current_user %}
+            <a href="{{ url_for('add_task') }}" class="btn primary-btn">Создать первое задание</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}22 задание{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Логотип/Название сайта слева -->
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}">Тренажер 22 задания ЕГЭ по русскому языку</a>
+            </div>
+
+            <!-- Навигационные ссылки справа -->
+            <div class="nav-links">
+                {% if current_user %}
+                    <!-- Если пользователь вошел -->
+                    <div class="user-menu">
+                        <span class="username">{{ current_user }}</span>
+                        <a href="{{ url_for('profile') }}" class="nav-btn">Профиль</a>
+                        <a href="{{ url_for('logout') }}" class="nav-btn logout">Выйти</a>
+                    </div>
+                {% else %}
+                    <div class="auth-links">
+                        <a href="{{ url_for('login') }}" class="nav-btn">Вход</a>
+                        <a href="{{ url_for('register') }}" class="nav-btn register">Регистрация</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-content">
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Мой Профиль{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-header">
+        <h1>Личный кабинет</h1>
+        <p class="welcome-text">Добро пожаловать в ваш профиль, {{ username }}!</p>
+    </div>
+    
+    <div class="profile-content">
+        <div class="profile-card">
+            <div class="profile-info">
+                <h2>Информация о профиле</h2>
+                <div class="info-item">
+                    <span class="label">Имя пользователя:</span>
+                    <span class="value">{{ username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Дата регистрации:</span>
+                    <span class="value">2024-01-01</span>
+
+            </div>
+            
+            <div class="profile-actions">
+                <h3>Действия</h3>
+                <div class="action-buttons">
+                    <button class="btn action-btn" onclick="alert('Функция в разработке')">Изменить данные</button>
+                    <button class="btn action-btn" onclick="alert('Функция в разработке')">Настройки</button>
+                    <a href="{{ url_for('logout') }}" class="btn logout-btn">Выйти из аккаунта</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
